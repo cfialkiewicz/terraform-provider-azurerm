@@ -12,16 +12,17 @@ import (
 type AppServiceGithubTokenDataSource struct{}
 
 func TestAccSourceControlGitHubTokenDataSource_basic(t *testing.T) {
-	if ok := os.Getenv("ARM_GITHUB_ACCESS_TOKEN"); ok == "" {
+	token := ""
+	if token = os.Getenv("ARM_GITHUB_ACCESS_TOKEN"); token == "" {
 		t.Skip("Skipping as `ARM_GITHUB_ACCESS_TOKEN` is not specified")
 	}
 
-	data := acceptance.BuildTestData(t, "data.azurerm_app_service_github_token", "test")
+	data := acceptance.BuildTestData(t, "data.azurerm_source_control_token", "test")
 	r := AppServiceGithubTokenDataSource{}
 
 	data.DataSourceTest(t, []acceptance.TestStep{
 		{
-			Config: r.basic(),
+			Config: r.basic(token),
 			Check: acceptance.ComposeTestCheckFunc(
 				check.That(data.ResourceName).Key("token").Exists(),
 			),
@@ -29,12 +30,14 @@ func TestAccSourceControlGitHubTokenDataSource_basic(t *testing.T) {
 	})
 }
 
-func (AppServiceGithubTokenDataSource) basic() string {
+func (AppServiceGithubTokenDataSource) basic(token string) string {
 	return fmt.Sprintf(`
 
 %s
 
-data azurerm_app_service_github_token test {}
+data azurerm_source_control_token test {
+  type = azurerm_source_control_token.test.type
+}
 
-`, AppServiceGitHubTokenResource{}.basic())
+`, AppServiceGitHubTokenResource{}.basic(token))
 }

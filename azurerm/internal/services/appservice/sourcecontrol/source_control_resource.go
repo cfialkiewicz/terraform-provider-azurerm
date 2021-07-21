@@ -23,7 +23,7 @@ type AppServiceSourceControlModel struct {
 	RepoURL                   string                      `tfschema:"repo_url"`
 	Branch                    string                      `tfschema:"branch"`
 	LocalGitSCM               bool                        `tfschema:"use_local_git"`
-	ManualIntegration         bool                        `tfschema:"manual_integration"`
+	ManualIntegration         bool                        `tfschema:"use_manual_integration"`
 	UseMercurial              bool                        `tfschema:"use_mercurial"`
 	RollbackEnabled           bool                        `tfschema:"rollback_enabled"`
 	UsesGithubAction          bool                        `tfschema:"uses_github_action"`
@@ -69,7 +69,7 @@ func (r AppServiceSourceControlResource) Arguments() map[string]*pluginsdk.Schem
 			ConflictsWith: []string{
 				"repo_url",
 				"branch",
-				"manual_integration",
+				"use_manual_integration",
 				"uses_github_action",
 				"github_action_configuration",
 				"use_mercurial",
@@ -77,7 +77,7 @@ func (r AppServiceSourceControlResource) Arguments() map[string]*pluginsdk.Schem
 			},
 		},
 
-		"manual_integration": {
+		"use_manual_integration": {
 			Type:     pluginsdk.TypeBool,
 			Optional: true,
 			Default:  false,
@@ -146,7 +146,7 @@ func (r AppServiceSourceControlResource) Create() sdk.ResourceFunc {
 			}
 
 			if appSourceControl.UsesGithubAction && appSourceControl.ManualIntegration {
-				return fmt.Errorf("source control for %s cannot have both `uses_github_action` and `manual_integration` set to true", id)
+				return fmt.Errorf("source control for %s cannot have both `uses_github_action` and `use_manual_integration` set to true", id)
 			}
 
 			app, err := client.Get(ctx, id.ResourceGroup, id.SiteName)
@@ -187,7 +187,6 @@ func (r AppServiceSourceControlResource) Create() sdk.ResourceFunc {
 				if _, err := client.Update(ctx, id.ResourceGroup, id.SiteName, sitePatch); err != nil {
 					return fmt.Errorf("setting App Source Control Type for %s: %v", id, err)
 				}
-
 			} else {
 				if ghaConfig := expandGithubActionConfig(appSourceControl.GithubActionConfiguration, usesLinux); ghaConfig != nil {
 					sourceControl.SiteSourceControlProperties.GitHubActionConfiguration = ghaConfig
@@ -327,7 +326,6 @@ func (r AppServiceSourceControlResource) Update() sdk.ResourceFunc {
 				if _, err := client.Update(ctx, id.ResourceGroup, id.SiteName, sitePatch); err != nil {
 					return fmt.Errorf("setting App Source Control Type for %s: %v", id, err)
 				}
-
 			} else {
 				if ghaConfig := expandGithubActionConfig(appSourceControl.GithubActionConfiguration, usesLinux); ghaConfig != nil {
 					sourceControl.SiteSourceControlProperties.GitHubActionConfiguration = ghaConfig
@@ -337,7 +335,6 @@ func (r AppServiceSourceControlResource) Update() sdk.ResourceFunc {
 				if err != nil {
 					return fmt.Errorf("updating Source Control configuration for %s: %v", id, err)
 				}
-
 			}
 
 			return nil

@@ -181,6 +181,35 @@ func TestAccSourceControlResource_linuxGitHub(t *testing.T) {
 	})
 }
 
+func TestAccSourceControlResource_linuxSCMTypeUpdate(t *testing.T) {
+	if ok := os.Getenv("ARM_GITHUB_ACCESS_TOKEN"); ok == "" {
+		t.Skip("Skipping as `ARM_GITHUB_ACCESS_TOKEN` is not specified")
+	}
+
+	data := acceptance.BuildTestData(t, "azurerm_app_service_source_control", "test")
+	r := AppServiceSourceControlResource{}
+
+	data.ResourceTest(t, r, []acceptance.TestStep{
+		{
+			Config: r.linuxLocalGit(data),
+			Check: acceptance.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+				check.That(data.ResourceName).Key("scm_type").HasValue("LocalGit"),
+				check.That(data.ResourceName).Key("repo_url").HasValue(fmt.Sprintf("https://acctestwa-%d.scm.azurewebsites.net", data.RandomInteger)),
+			),
+		},
+		data.ImportStep(),
+		{
+			Config: r.linuxGitHub(data),
+			Check: acceptance.ComposeTestCheckFunc(
+				check.That(data.ResourceName).ExistsInAzure(r),
+				check.That(data.ResourceName).Key("scm_type").HasValue("GitHub"),
+			),
+		},
+		data.ImportStep(),
+	})
+}
+
 func (r AppServiceSourceControlResource) Exists(ctx context.Context, client *clients.Client, state *pluginsdk.InstanceState) (*bool, error) {
 	id, err := parse.WebAppID(state.ID)
 	if err != nil {
@@ -276,8 +305,8 @@ provider "azurerm" {
 %s
 
 resource "azurerm_app_service_source_control" "test" {
-  app_id   = azurerm_linux_web_app.test.id
-  scm_type = "LocalGit"
+  app_id        = azurerm_linux_web_app.test.id
+  use_local_git = true
 }
 
 `, baseLinuxAppTemplate(data))
@@ -379,16 +408,17 @@ provider "azurerm" {
 
 %s
 
-resource azurerm_source_control_token test {
+resource "azurerm_source_control_token" "test" {
   type  = "GitHub"
   token = "%s"
 }
 
 resource "azurerm_app_service_source_control" "test" {
-  app_id   = azurerm_linux_web_app.test.id
-  repo_url = "https://github.com/jackofallops/azure-app-service-static-site-tests"
-  branch   = "development"
-  scm_type = "GitHub"
+  app_id             = azurerm_linux_web_app.test.id
+  repo_url           = "https://github.com/Azure-Samples/python-docs-hello-world.git"
+  branch             = "master"
+  scm_type           = azurerm_source_control_token.test.type
+  manual_integration = true
 }
 
 `, baseLinuxAppTemplate(data), token)

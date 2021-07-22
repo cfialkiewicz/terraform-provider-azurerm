@@ -281,7 +281,7 @@ provider "azurerm" {
 %s
 
 resource "azurerm_app_service_source_control" "test" {
-  app_id   = azurerm_windows_web_app.test.id
+  app_id        = azurerm_windows_web_app.test.id
   use_local_git = true
 }
 

@@ -25,6 +25,7 @@ func (r Registration) DataSources() []sdk.DataSource {
 	if features.ThreePointOh() {
 		return []sdk.DataSource{
 			AppServiceSourceControlTokenDataSource{},
+			WindowsWebAppDataSource{},
 		}
 	}
 	return []sdk.DataSource{}

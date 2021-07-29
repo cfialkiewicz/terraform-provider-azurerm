@@ -666,6 +666,159 @@ func siteConfigSchemaLinux() *pluginsdk.Schema {
 	}
 }
 
+func siteConfigSchemaLinuxComputed() *pluginsdk.Schema {
+	return &pluginsdk.Schema{
+		Type:     pluginsdk.TypeList,
+		Computed: true,
+		Elem: &pluginsdk.Resource{
+			Schema: map[string]*pluginsdk.Schema{
+				"always_on": {
+					Type:     pluginsdk.TypeBool,
+					Computed: true,
+				},
+
+				"api_management_config_id": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"app_command_line": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"application_stack": linuxApplicationStackSchemaComputed(),
+
+				"auto_heal": {
+					Type:     pluginsdk.TypeBool,
+					Computed: true,
+				},
+
+				"auto_heal_setting": autoHealSettingSchemaLinuxComputed(),
+
+				"container_registry_use_managed_identity": {
+					Type:     pluginsdk.TypeBool,
+					Computed: true,
+				},
+
+				"container_registry_managed_identity_id": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"default_documents": {
+					Type:     pluginsdk.TypeList,
+					Computed: true,
+					Elem: &pluginsdk.Schema{
+						Type: pluginsdk.TypeString,
+					},
+				},
+
+				"http2_enabled": {
+					Type:     pluginsdk.TypeBool,
+					Computed: true,
+				},
+
+				"ip_restriction": helpers.IpRestrictionSchemaComputed(),
+
+				"scm_use_main_ip_restriction": {
+					Type:     pluginsdk.TypeBool,
+					Computed: true,
+				},
+
+				"scm_ip_restriction": helpers.IpRestrictionSchemaComputed(),
+
+				"local_mysql": {
+					Type:     pluginsdk.TypeBool,
+					Computed: true,
+				},
+
+				"load_balancing_mode": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"managed_pipeline_mode": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"remote_debugging": {
+					Type:     pluginsdk.TypeBool,
+					Computed: true,
+				},
+
+				"remote_debugging_version": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"scm_type": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"use_32_bit_worker": {
+					Type:     pluginsdk.TypeBool,
+					Computed: true,
+				},
+
+				"websockets": {
+					Type:     pluginsdk.TypeBool,
+					Computed: true,
+				},
+
+				"ftps_state": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"health_check_path": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"number_of_workers": {
+					Type:     pluginsdk.TypeInt,
+					Computed: true,
+				},
+
+				"minimum_tls_version": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"scm_minimum_tls_version": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"cors": helpers.CorsSettingsSchemaComputed(),
+
+				"auto_swap_slot_name": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"detailed_error_logging": {
+					Type:     pluginsdk.TypeBool,
+					Computed: true,
+				},
+
+				"linux_fx_version": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"windows_fx_version": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+			},
+		},
+	}
+}
+
 type ApplicationStackWindows struct {
 	NetFrameworkVersion     string `tfschema:"dotnet_framework_version"`
 	PhpVersion              string `tfschema:"php_version"`
@@ -1005,6 +1158,66 @@ func linuxApplicationStackSchema() *pluginsdk.Schema {
 	}
 }
 
+func linuxApplicationStackSchemaComputed() *pluginsdk.Schema {
+	return &pluginsdk.Schema{
+		Type:     pluginsdk.TypeList,
+		Computed: true,
+		Elem: &pluginsdk.Resource{
+			Schema: map[string]*pluginsdk.Schema{
+				"dotnet_framework_version": { // Windows Only
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"php_version": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"python_version": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"node_version": { // Discarded by service if JavaVersion is specified
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"ruby_version": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"java_version": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"java_server": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"java_server_version": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"docker_image": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"docker_image_tag": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+			},
+		},
+	}
+}
+
 type AutoHealSettingWindows struct {
 	Triggers []AutoHealTriggerWindows `tfschema:"trigger"`
 	Actions  []AutoHealActionWindows  `tfschema:"action"`
@@ -1111,6 +1324,20 @@ func autoHealSettingSchemaLinux() *pluginsdk.Schema {
 		},
 		RequiredWith: []string{
 			"site_config.0.auto_heal",
+		},
+	}
+}
+
+func autoHealSettingSchemaLinuxComputed() *pluginsdk.Schema {
+	return &pluginsdk.Schema{
+		Type:     pluginsdk.TypeList,
+		Computed: true,
+		Elem: &pluginsdk.Resource{
+			Schema: map[string]*pluginsdk.Schema{
+				"trigger": autoHealTriggerSchemaLinuxComputed(),
+
+				"action": autoHealActionSchemaLinuxComputed(),
+			},
 		},
 	}
 }
@@ -1222,6 +1449,26 @@ func autoHealActionSchemaLinux() *pluginsdk.Schema {
 					Optional: true,
 					Computed: true,
 					//ValidateFunc: // TODO - Time in hh:mm:ss, because why not...
+				},
+			},
+		},
+	}
+}
+
+func autoHealActionSchemaLinuxComputed() *pluginsdk.Schema {
+	return &pluginsdk.Schema{
+		Type:     pluginsdk.TypeList,
+		Computed: true,
+		Elem: &pluginsdk.Resource{
+			Schema: map[string]*pluginsdk.Schema{
+				"action_type": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
+				},
+
+				"minimum_process_execution_time": {
+					Type:     pluginsdk.TypeString,
+					Computed: true,
 				},
 			},
 		},
@@ -1543,6 +1790,100 @@ func autoHealTriggerSchemaLinux() *pluginsdk.Schema {
 								Type:         pluginsdk.TypeString,
 								Optional:     true,
 								ValidateFunc: validation.StringIsNotEmpty,
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+func autoHealTriggerSchemaLinuxComputed() *pluginsdk.Schema {
+	return &pluginsdk.Schema{
+		Type:     pluginsdk.TypeList,
+		Computed: true,
+		Elem: &pluginsdk.Resource{
+			Schema: map[string]*pluginsdk.Schema{
+				"requests": {
+					Type:     pluginsdk.TypeList,
+					Computed: true,
+					Elem: &pluginsdk.Resource{
+						Schema: map[string]*pluginsdk.Schema{
+							"count": {
+								Type:     pluginsdk.TypeInt,
+								Computed: true,
+							},
+
+							"interval": {
+								Type:     pluginsdk.TypeString,
+								Computed: true,
+							},
+						},
+					},
+				},
+
+				"status_code": {
+					Type:     pluginsdk.TypeList,
+					Computed: true,
+					Elem: &pluginsdk.Resource{
+						Schema: map[string]*pluginsdk.Schema{
+							"status_code_range": {
+								Type:     pluginsdk.TypeString,
+								Computed: true,
+							},
+
+							"count": {
+								Type:     pluginsdk.TypeInt,
+								Computed: true,
+							},
+
+							"interval": {
+								Type:     pluginsdk.TypeString,
+								Computed: true,
+							},
+
+							"sub_status": {
+								Type:     pluginsdk.TypeInt,
+								Computed: true,
+							},
+
+							"win_32_status": {
+								Type:     pluginsdk.TypeString,
+								Computed: true,
+							},
+
+							"path": {
+								Type:     pluginsdk.TypeString,
+								Computed: true,
+							},
+						},
+					},
+				},
+
+				"slow_request": {
+					Type:     pluginsdk.TypeList,
+					Optional: true,
+					Elem: &pluginsdk.Resource{
+						Schema: map[string]*pluginsdk.Schema{
+							"time_taken": {
+								Type:     pluginsdk.TypeString,
+								Computed: true,
+							},
+
+							"interval": {
+								Type:     pluginsdk.TypeString,
+								Computed: true,
+							},
+
+							"count": {
+								Type:     pluginsdk.TypeInt,
+								Computed: true,
+							},
+
+							"path": {
+								Type:     pluginsdk.TypeString,
+								Computed: true,
 							},
 						},
 					},

@@ -218,6 +218,8 @@ func (d WindowsWebAppDataSource) Read() sdk.ResourceFunc {
 
 			webApp.SiteCredentials = helpers.FlattenSiteCredentials(siteCredentials)
 
+			metadata.SetID(id)
+
 			return metadata.Encode(&webApp)
 		},
 	}

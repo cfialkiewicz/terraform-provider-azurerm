@@ -79,6 +79,17 @@ func (d WindowsWebAppDataSource) Attributes() map[string]*pluginsdk.Schema {
 
 		"connection_string": connectionStringSchemaComputed(),
 
+		"custom_domain_verification_id": {
+			Type:      pluginsdk.TypeString,
+			Computed:  true,
+			Sensitive: true,
+		},
+
+		"default_hostname": {
+			Type:     pluginsdk.TypeString,
+			Computed: true,
+		},
+
 		"enabled": {
 			Type:     pluginsdk.TypeBool,
 			Computed: true,
@@ -91,7 +102,40 @@ func (d WindowsWebAppDataSource) Attributes() map[string]*pluginsdk.Schema {
 
 		"identity": helpers.IdentitySchemaComputed(),
 
+		"kind": {
+			Type:     pluginsdk.TypeString,
+			Computed: true,
+		},
+
 		"logs": logsConfigSchemaComputed(),
+
+		"outbound_ip_addresses": {
+			Type:     pluginsdk.TypeString,
+			Computed: true,
+		},
+
+		"outbound_ip_address_list": {
+			Type:     pluginsdk.TypeList,
+			Computed: true,
+			Elem: &pluginsdk.Schema{
+				Type: pluginsdk.TypeString,
+			},
+		},
+
+		"possible_outbound_ip_addresses": {
+			Type:     pluginsdk.TypeString,
+			Computed: true,
+		},
+
+		"possible_outbound_ip_address_list": {
+			Type:     pluginsdk.TypeList,
+			Computed: true,
+			Elem: &pluginsdk.Schema{
+				Type: pluginsdk.TypeString,
+			},
+		},
+
+		"site_credential": helpers.SiteCredentialSchema(),
 
 		"site_config": siteConfigSchemaWindowsComputed(),
 
